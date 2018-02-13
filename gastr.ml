@@ -1,10 +1,8 @@
 (* The target string *)
-let _perfect = "Some may question your right to destroy ten billion people. Those who understand realise that you have no right to let them live !"
-in
+let _perfect = "Some may question your right to destroy ten billion people. Those who understand realise that you have no right to let them live !";;
 
 (* Returns a printable character (from Space character to DEL character) *)
-let random_char () = Char.chr ((Random.int 97) + 32)
-in
+let random_char () = Char.chr ((Random.int 97) + 32);;
 
 (* Makes a random individual of length 'len' *)
 let make_individual len =
@@ -12,8 +10,7 @@ let make_individual len =
     for i = 0 to len - 1 do
         Bytes.set ind i (random_char());
     done;
-    ind
-in
+    ind;;
 
 (* Makes a crossover between 'ind1' and 'ind2' individuals *)
 let rec cross ind1 ind2 len =
@@ -27,8 +24,7 @@ let rec cross ind1 ind2 len =
     for k = i + 1 to len - 1 do
         Bytes.set ind k (Bytes.get ind2 k);
     done;
-    ind
-in
+    ind;;
 
 (* Computes the error between 'str' and the target *)
 let error str =
@@ -36,8 +32,7 @@ let error str =
     for i = 0 to String.length _perfect - 1 do
         if (str.[i] <> _perfect.[i]) then incr counter
     done;
-    !counter
-in
+    !counter;;
 
 (* Mutates an individual.
  * There are no mutations if the individual is already perfect.
@@ -53,16 +48,14 @@ let mutate ind len =
     in
     if (error ind = 0) then () else
     if (error ind > String.length _perfect / 2) then mutate_aux 4 else
-    if (Random.int 100 > 75) then mutate_aux 1
-in
+    if (Random.int 100 > 75) then mutate_aux 1;;
 
 (* Makes a list with 'nb' random individuals of length 'len' *)
 let make_random_inds nb len =
     let rec aux_random_inds i n acc =
         if (i = n) then acc
         else aux_random_inds (i+1) n ((make_individual len)::acc)
-    in aux_random_inds 0 nb []
-in
+    in aux_random_inds 0 nb [];;
 
 (* Sorts the generation (lowest error scores are ranked first) *)
 let sort_gen gen =
@@ -74,16 +67,14 @@ let sort_gen gen =
             let minus = List.filter (fun (i, ei) -> ei < x) r in
             let plus = List.filter (fun (i, ei) -> ei >= x) r in
             (qsort minus)@(gt::(qsort plus))
-    in List.map fst (qsort gentuples)
-in
+    in List.map fst (qsort gentuples);;
 
 (* Returns a list with the 'n' first elements of the list 'l' *)
 let take n l =
     let rec take_aux i n l acc = if (i = n) then acc else match l with
         | [] -> acc
         | e::r -> take_aux (i+1) n r (e::acc)
-    in take_aux 0 n l []
-in
+    in take_aux 0 n l [];;
 
 (** Composition of generation n+1 :
  * the best individual from generation n
@@ -116,8 +107,7 @@ let make_next_gen sortedgen nb len =
             mutate_all r
     in
     mutate_all result;
-    sort_gen result
-in
+    sort_gen result;;
 
 (* Main loop *)
 
@@ -133,7 +123,6 @@ let main () =
         let best = Bytes.to_string (List.hd !generation) in
         e := error best;
         Printf.printf "Generation %d | Best : %s | Error : %d\n" !i best !e;
-    done
-in
+    done;;
 
-main();
+main();;
